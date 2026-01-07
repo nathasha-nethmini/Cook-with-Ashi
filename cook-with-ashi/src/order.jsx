@@ -25,7 +25,7 @@ export default function Order() {
       });
 
       if (res.ok) {
-        alert("Order is pending. You will receive a message once confirmed.");
+        alert("Your order has been successfully sent to the admin. ✅You will be notified via WhatsApp if your order can be delivered or not. Please check WhatsApp within 10 minutes for your order status.Thank you for ordering from us! 🙏");
         // ✅ clear form
         
 

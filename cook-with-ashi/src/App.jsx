@@ -6,6 +6,7 @@ import Order from "./order";
 import About from "./about";
 import Contact from "./contact";
 import Post from "./post";
+import Listtodeliver from "./listtodeliver";
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/post" element={<Post/>} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/listtodeliver" element={<Listtodeliver/>} />
       </Routes>
     </BrowserRouter>
   );
