@@ -23,7 +23,7 @@ function Admin() {
         const todayString = today.toISOString().split("T")[0]; // Get only YYYY-MM-DD
 
         const adminOrders = data.filter(order => 
-            order.meal === "Vegetarian Plate" && 
+            order.meal.toLowerCase() === "lunch"  && 
             order.date.split("T")[0] === todayString
         )  .sort((a, b) => new Date(b.date) - new Date(a.date));
 

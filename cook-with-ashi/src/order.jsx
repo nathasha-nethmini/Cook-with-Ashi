@@ -1,11 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Order() {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [landmark, setLandmark] = useState("");
   const [phone, setPhone] = useState("");
-  const [meal, setMeal] = useState("Rice & Curry");
+  const [meal, setMeal] = useState("");
+  const [menuList, setMenuList] = useState([]); // store menu from DB
+
+  // Fetch menu from backend
+  const fetchMenu = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/menu");
+      const data = await res.json();
+      setMenuList(data);
+
+      // Set default meal to first item if not set
+      if (data.length > 0 && !meal) setMeal(data[0].name);
+    } catch (err) {
+      console.error("Failed to fetch menu:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchMenu();
+  }, []);
 
   const submitOrder = async (e) => {
     e.preventDefault();
@@ -25,15 +44,15 @@ export default function Order() {
       });
 
       if (res.ok) {
-        alert("Your order has been successfully sent to the admin. ✅You will be notified via WhatsApp if your order can be delivered or not. Please check WhatsApp within 10 minutes for your order status.Thank you for ordering from us! 🙏");
-        // ✅ clear form
-        
-
+        alert(
+          "Your order has been successfully sent to the admin. ✅You will be notified via WhatsApp within 10 minutes. Thank you!"
+        );
+        // Clear form
         setName("");
         setAddress("");
         setLandmark("");
         setPhone("");
-        setMeal("Rice & Curry");
+        if (menuList.length > 0) setMeal(menuList[0].name);
       } else {
         alert("Failed to submit order");
       }
@@ -58,7 +77,8 @@ export default function Order() {
               onChange={(e) => setName(e.target.value)}
               required
             />
-          </label><br/>
+          </label>
+          <br />
 
           <label>
             Address
@@ -69,7 +89,8 @@ export default function Order() {
               onChange={(e) => setAddress(e.target.value)}
               required
             />
-          </label><br/>
+          </label>
+          <br />
 
           <label>
             Landmark
@@ -79,7 +100,8 @@ export default function Order() {
               placeholder="Ex: School, Temple"
               onChange={(e) => setLandmark(e.target.value)}
             />
-          </label><br/>
+          </label>
+          <br />
 
           <label>
             Phone
@@ -90,24 +112,48 @@ export default function Order() {
               onChange={(e) => setPhone(e.target.value)}
               required
             />
-          </label><br/>
-          <p className="note"> * Please add a valid number. You will receive a call once the order is delivered. </p>
+          </label>
+          <br />
+          <p className="note">
+            * Please add a valid number. You will receive a call once the order is delivered.
+          </p>
+
           <label>
             Meal
-            <select
-              value={meal}
-              onChange={(e) => setMeal(e.target.value)}
-            >
-              <option>Rice & Curry</option>
-              <option>Vegetarian Plate</option>
-              <option>Snack Box</option>
+            <select value={meal} onChange={(e) => setMeal(e.target.value)}>
+              {menuList.map((item) => (
+                <option key={item._id} value={item.name}>
+                  {item.name} (Rs. {item.price})
+                </option>
+              ))}
             </select>
-          </label><br/><br/>
-          <label> Order Status <input type="text" value="Pending..." readOnly /> </label>
+          </label>
+          <br />
+          <br />
+          <label>
+            Order Status <input type="text" value="Pending..." readOnly />
+          </label>
           <button type="submit">Submit Order</button>
         </form>
       </div>
-      <div className="menucolumn"> <h3>Today’s Menu</h3> <div className="todaymenu"></div> </div>
+
+      <div className="menucolumn">
+        <h3>Today’s Menu</h3>
+        <div className="todaymenu">
+          {menuList.length === 0 && <p>No menu items available today.</p>}
+          {menuList.map((item) => (
+            <div key={item._id} className="menu-card">
+              <img
+                src={`http://localhost:5000/uploads/${item.image}`}
+                alt={item.name}
+                className="menu-image"
+              />
+              <h4>{item.name}</h4>
+              <p>Price: Rs. {item.price}</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
