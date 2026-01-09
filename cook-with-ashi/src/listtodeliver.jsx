@@ -18,9 +18,17 @@ function Admin() {
         if (!res.ok) throw new Error("Network response was not ok");
 
         const data = await res.json();
-        // Filter only Vegetarian Plate orders
-        const adminOrders = data.filter(order => order.meal !== "Vegetarian Plate");
+        const today = new Date();
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(today.getDate() - 30);
+
+        const adminOrders = data.filter(order => 
+            order.meal !== "Vegetarian Plate" &&
+            new Date(order.date) >= thirtyDaysAgo
+        )  .sort((a, b) => new Date(b.date) - new Date(a.date));
+
         setOrders(adminOrders);
+
       } catch (err) {
         console.error("Error fetching orders:", err);
       } finally {
@@ -38,12 +46,12 @@ function Admin() {
   return (
     <div style={{ padding: "20px" }}>
       <nav>
-        <Link to="/admin">Orders to Deliver</Link>
+        <Link to="/admin">Admin Page</Link>
         <Link to="/post">Posts</Link>
       </nav>
       <button id="logout" onClick={logout}>Logout</button>
 
-      <h1>Admin Orders</h1>
+      <h1>Orders to deliver later</h1>
 
       {orders.length === 0 ? (
         <p>No orders</p>

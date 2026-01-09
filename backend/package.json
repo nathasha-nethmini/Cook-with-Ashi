@@ -16,6 +16,7 @@
     "express": "^5.2.1",
     "mongodb": "^7.0.0",
     "mongoose": "^9.1.2",
+    "multer": "^2.0.2",
     "node-fetch": "^2.7.0",
     "twilio": "^5.11.1"
   }

@@ -23,7 +23,7 @@ export default function Contact() {
           Feel free to reach out to us anytime.
         </p>
 
-        <form onSubmit={handleSubmit}>
+        {/* <form onSubmit={handleSubmit}>
           <label>
             Name
             <input type="text" placeholder="Your Name" required />
@@ -43,7 +43,7 @@ export default function Contact() {
         </form>
       </div>
 
-      <div className="contact-info">
+      <div className="contact-info"> */}
         <h3>Get in Touch</h3>
         <p><strong>📍 Location:</strong> Badulla Town</p>
         <p><strong>📞 Phone:</strong> 07X XXX XXXX</p>

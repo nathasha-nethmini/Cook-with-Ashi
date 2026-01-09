@@ -19,7 +19,14 @@ function Admin() {
 
         const data = await res.json();
         // Filter only Vegetarian Plate orders
-        const adminOrders = data.filter(order => order.meal === "Vegetarian Plate");
+        const today = new Date();
+        const todayString = today.toISOString().split("T")[0]; // Get only YYYY-MM-DD
+
+        const adminOrders = data.filter(order => 
+            order.meal === "Vegetarian Plate" && 
+            order.date.split("T")[0] === todayString
+        )  .sort((a, b) => new Date(b.date) - new Date(a.date));
+
         setOrders(adminOrders);
       } catch (err) {
         console.error("Error fetching orders:", err);
@@ -38,12 +45,12 @@ function Admin() {
   return (
     <div style={{ padding: "20px" }}>
       <nav>
-        <Link to="/listtodeliver">List to Deliver</Link>
+        <Link to="/listtodeliver">Orders to Deliver</Link>
         <Link to="/post">Posts</Link>
       </nav>
       <button id="logout" onClick={logout}>Logout</button>
 
-      <h1>Admin Orders</h1>
+      <h1>Admin Home page</h1>
 
       {orders.length === 0 ? (
         <p>No orders</p>

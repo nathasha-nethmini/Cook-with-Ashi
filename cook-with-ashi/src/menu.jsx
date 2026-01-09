@@ -1,12 +1,43 @@
+import { useEffect, useState } from "react";
+import "./admin.css";
+
 function Menu() {
-  return (
-      <div className="menu">
-          <img id='icon' src="/favicon.ico" alt="cook with Ashi icon" />
-          <h2>Today's lunch</h2>
-          <p>This is the menu for today's lunch.</p>
-          <div className="todaymenu"></div>
-          
-    </div>
+  const [menuList, setMenuList] = useState([]);
+
+  // Fetch available menu from backend
+  const fetchMenu = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/menu");
+      const data = await res.json();
+      setMenuList(data);
+    } catch (err) {
+      console.error("Failed to fetch menu:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchMenu();
+  }, []);
+
+  return (<>
+    <h2 style={{textAlign:"center"}}>Available Menu for today</h2><br/>
+      <div className="menu-list">
+        {menuList.length === 0 && <p style={{ textAlign: "center" }}>No menu items available today.</p>}
+
+        {menuList.map((item) => (
+          <div className="menu-card" key={item._id}>
+            <img
+              src={`http://localhost:5000/uploads/${item.image}`}
+              alt={item.name}
+              className="menu-image"
+            />
+            <h3>{item.name}</h3>
+            <p>Price: Rs. {item.price}</p>
+          </div>
+        ))}
+      
+    </div></>
   );
 }
+
 export default Menu;

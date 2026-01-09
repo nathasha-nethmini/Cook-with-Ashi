@@ -4,7 +4,9 @@ function Header() {
     const welcomeText = 'WELCOME...!';
     return (
         <header>
-            <Link to="/admin-login" target='blank'><button id='admin'>admin</button></Link>
+            <div style={{ display: "grid", gridTemplateColumns: "50% 50%" }}>
+            <img id="icon" src="/favicon.ico" alt="cook with Ashi icon" />
+            <Link to="/admin-login" target='blank'><button id='admin' >admin</button></Link></div>
             <h2 className="welcome">
                 {Array.from(welcomeText).map((ch, i) => (
                     <span key={i} className="letter" style={{ ['--i']: i }}>{ch}</span>
