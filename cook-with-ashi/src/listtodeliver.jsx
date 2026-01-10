@@ -14,7 +14,7 @@ function Admin() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/orders"); // Make sure backend is running
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`); // Make sure backend is running
         if (!res.ok) throw new Error("Network response was not ok");
 
         const data = await res.json();

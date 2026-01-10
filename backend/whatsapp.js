@@ -1,21 +1,21 @@
+require("dotenv").config();
 const twilio = require("twilio");
 
-
-// Twilio credentials from dashboard
-const accountSid = process.env.TWILIO_SID;
-const authToken =process.env.TWILIO_AUTH_TOKEN;
-const client = twilio(accountSid, authToken);
+const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
 
 // Function to send WhatsApp message
 function sendAdminWhatsApp(order) {
+  console.log("Sending WhatsApp:", order); // log order details
+
   client.messages
     .create({
-      from: `whatsapp:${process.env.TWILIO_PHONE_NUMBER}`, // Twilio Sandbox number
-      to: `whatsapp:${process.env.ADMIN_PHONE_NUMBER}`,   // Admin's WhatsApp number
-      body: `🍽️ New Order Received!\n\nCustomer: ${order.name}\nPhone: ${order.phone}\nMeal: ${order.meal}\nAddress: ${order.address}`
+      from: `whatsapp:${process.env.TWILIO_PHONE_NUMBER}`,
+      to: `whatsapp:${process.env.ADMIN_PHONE_NUMBER}`,
+      body: `🍽️ New Order Received!\nCustomer: ${order.name}\nPhone: ${order.phone}\nMeal: ${order.meal}\nAddress: ${order.address}`
     })
     .then(message => console.log("WhatsApp sent, SID:", message.sid))
     .catch(err => console.error("WhatsApp error:", err));
 }
+
 
 module.exports = sendAdminWhatsApp;

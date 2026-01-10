@@ -11,7 +11,7 @@ export default function Order() {
   // Fetch menu from backend
   const fetchMenu = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/menu");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/menu`);
       const data = await res.json();
       setMenuList(data);
 
@@ -37,7 +37,7 @@ export default function Order() {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/order", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData)
@@ -144,7 +144,7 @@ export default function Order() {
           {menuList.map((item) => (
             <div key={item._id} className="menu-card">
               <img
-                src={`http://localhost:5000/uploads/${item.image}`}
+                src={item.image}
                 alt={item.name}
                 className="menu-image"
               />

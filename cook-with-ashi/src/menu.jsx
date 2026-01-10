@@ -7,7 +7,7 @@ function Menu() {
   // Fetch available menu from backend
   const fetchMenu = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/menu");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/menu`);
       const data = await res.json();
       setMenuList(data);
     } catch (err) {
@@ -27,7 +27,7 @@ function Menu() {
         {menuList.map((item) => (
           <div className="menu-card" key={item._id}>
             <img
-              src={`http://localhost:5000/uploads/${item.image}`}
+              src={item.image}
               alt={item.name}
               className="menu-image"
             />

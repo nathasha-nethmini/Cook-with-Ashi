@@ -11,7 +11,7 @@ function Post() {
   // Fetch all menu items from backend
   const fetchMenu = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/menu");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/menu`);
       const data = await res.json();
       setMenuList(data);
     } catch (err) {
@@ -39,7 +39,7 @@ function Post() {
     formData.append("image", image);
 
     try {
-      const res = await fetch("http://localhost:5000/api/menu", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/menu`, {
         method: "POST",
         body: formData,
       });
@@ -64,7 +64,7 @@ function Post() {
     if (!window.confirm("Are you sure you want to delete this menu item?")) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/menu/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/menu/${id}`, {
         method: "DELETE",
       });
       const data = await res.json();
@@ -131,7 +131,7 @@ function Post() {
         {menuList.map((item) => (
           <div className="menu-card" key={item._id}>
             <img
-              src={`http://localhost:5000/uploads/${item.image}`}
+              src={item.image}
               alt={item.name}
             />
             <h3>{item.name}</h3>

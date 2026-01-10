@@ -1,56 +1,60 @@
-
-
-
-
 require("dotenv").config();
 const express = require("express");
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 const multer = require("multer");
-const { ObjectId } = require("mongodb");
+const cloudinary = require("cloudinary").v2; // Using Cloudinary v1 for compatibility
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const sendAdminWhatsApp = require("./whatsapp");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+/* ---------- DATABASE SETUP ---------- */
 const uri = process.env.DBURL;
 const client = new MongoClient(uri);
 
 let ordersCollection;
 let menuCollection;
 
-/* ---------- MULTER SETUP ---------- */
-const storage = multer.diskStorage({
-  destination: "uploads/",
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
-  }
-});
-const upload = multer({ storage });
-
-/* ---------- DB CONNECT ---------- */
 async function connectDB() {
   try {
     await client.connect();
     console.log("Connected to MongoDB!");
-
     const db = client.db("foodDB");
     ordersCollection = db.collection("orders");
-    menuCollection = db.collection("menu"); // ✅ FIX
+    menuCollection = db.collection("menu");
   } catch (err) {
-    console.error(err);
+    console.error("DB connection error:", err);
   }
 }
 connectDB();
+
+/* ---------- CLOUDINARY SETUP ---------- */
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+});
+
+// Multer + Cloudinary storage
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "menu_images",
+    allowed_formats: ["jpg", "jpeg", "png"],
+  },
+});
+
+const upload = multer({ storage });
 
 /* ---------- ORDER ROUTES ---------- */
 app.post("/api/order", async (req, res) => {
   try {
     const newOrder = { ...req.body, date: new Date() };
-    const result = await ordersCollection.insertOne(newOrder);
-
-    sendAdminWhatsApp(newOrder); 
+    await ordersCollection.insertOne(newOrder);
+    sendAdminWhatsApp(newOrder);
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -58,29 +62,33 @@ app.post("/api/order", async (req, res) => {
 });
 
 app.get("/api/orders", async (req, res) => {
-  const orders = await ordersCollection.find().toArray();
-  res.json(orders);
+  try {
+    const orders = await ordersCollection.find().toArray();
+    res.json(orders);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 /* ---------- MENU ROUTES ---------- */
 app.post("/api/menu", upload.single("image"), async (req, res) => {
   try {
-    console.log("REQ BODY:", req.body);
-    console.log("REQ FILE:", req.file);
+    if (!req.file) {
+      return res.status(400).json({ error: "Image is required" });
+    }
 
     const menuItem = {
       name: req.body.name,
       price: Number(req.body.price),
-      image: req.file.filename,
-      date: new Date()
+      image: req.file.path, // Cloudinary URL
+      date: new Date(),
     };
 
     const result = await menuCollection.insertOne(menuItem);
-    console.log("Inserted menu item:", result.insertedId);
 
-    res.json({ success: true, message: "Menu saved" });
+    res.json({ success: true, message: "Menu saved", data: menuItem });
   } catch (err) {
-    console.error(err);
+    console.error("Menu route error:", err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -98,11 +106,10 @@ app.get("/api/menu", async (req, res) => {
 
     res.json(menuItems);
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
 
-// Delete a menu item by ID
 app.delete("/api/menu/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -115,14 +122,10 @@ app.delete("/api/menu/:id", async (req, res) => {
       res.status(404).json({ success: false, message: "Menu item not found" });
     }
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
 
-
-/* ---------- STATIC IMAGE ---------- */
-app.use("/uploads", express.static("uploads"));
-
-app.listen(5000, () => console.log("Server running on port 5000"));
-
-
+/* ---------- START SERVER ---------- */
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

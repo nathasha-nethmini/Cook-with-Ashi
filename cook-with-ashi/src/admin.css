@@ -123,12 +123,21 @@ nav a:hover{
   background: #fff;
   text-align: center;
 }
+/* Remove fixed height for images and keep aspect ratio */
+.menu-card img {
+  width: 100%;
+  height: auto; /* lets the image keep its natural height */
+  object-fit: contain; /* ensures the whole image fits without cropping */
+  border-radius: 8px;
+}
+
 .image-box img {
   width: 100%;
-  height: 180px;
-  object-fit: cover;
+  height: auto; /* keep original height */
+  object-fit: contain;
   border-radius: 10px;
 }
+
 
 .placeholder {
   height: 180px;
@@ -167,12 +176,7 @@ nav a:hover{
 }
 
 
-.menu-card img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 8px;
-}
+
 
 .menu-card input[type="text"],
 .menu-card input[type="number"] {
