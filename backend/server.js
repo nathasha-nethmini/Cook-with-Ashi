@@ -125,7 +125,11 @@ app.delete("/api/menu/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+app.use(express.static(path.join(__dirname, "client/build"))); // change 'client' if your React folder has a different name
 
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client/build", "index.html"));
+});
 /* ---------- START SERVER ---------- */
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
