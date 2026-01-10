@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import Swal from "sweetalert2";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Order() {
   const [name, setName] = useState("");
@@ -7,6 +9,11 @@ export default function Order() {
   const [phone, setPhone] = useState("");
   const [meal, setMeal] = useState("");
   const [menuList, setMenuList] = useState([]); // store menu from DB
+  const navigate = useNavigate();
+  
+  const home = () => {
+    navigate("/");
+  };
 
   // Fetch menu from backend
   const fetchMenu = async () => {
@@ -28,25 +35,25 @@ export default function Order() {
 
   const submitOrder = async (e) => {
     e.preventDefault();
-    const orderData = {
-      name,
-      address,
-      landmark,
-      phone,
-      meal
-    };
+    const orderData = { name, address, landmark, phone, meal };
 
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData)
+        body: JSON.stringify(orderData),
       });
 
       if (res.ok) {
-        alert(
-          "Your order has been successfully sent to the admin. ✅You will be notified via WhatsApp within 10 minutes. Thank you!"
-        );
+        // Show SweetAlert2 popup
+        Swal.fire({
+          title: "Order Received!",
+          html: `Thank you! Your order has been received.<br><b>We will contact you within 10 minutes via WhatsApp to confirm if we can deliver.</b>`,
+          icon: "success",
+          confirmButtonText: "OK",
+          customClass: { popup: "popup-large-text" },
+        });
+
         // Clear form
         setName("");
         setAddress("");
@@ -54,16 +61,29 @@ export default function Order() {
         setPhone("");
         if (menuList.length > 0) setMeal(menuList[0].name);
       } else {
-        alert("Failed to submit order");
+        Swal.fire({
+          title: "Failed",
+          text: "Failed to submit order. Please try again.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
       }
     } catch (err) {
       console.error(err);
-      alert("Server not reachable");
+      Swal.fire({
+        title: "Error",
+        text: "Server not reachable. Please try again later.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
 
   return (
     <div className="order">
+      <button id="logout" onClick={home}>
+        Home
+      </button>
       <div className="orderform">
         <h2>Place an Order</h2>
         <p>Choose your meal and complete the order form.</p>
@@ -115,7 +135,7 @@ export default function Order() {
           </label>
           <br />
           <p className="note">
-            * Please add a valid number. You will receive a call once the order is delivered.
+            * Please add a valid number. You will receive a WhatsApp notification once the order is processed.
           </p>
 
           <label>
@@ -130,29 +150,26 @@ export default function Order() {
           </label>
           <br />
           <br />
+
           <label>
             Order Status <input type="text" value="Pending..." readOnly />
           </label>
+          <br />
           <button type="submit">Submit Order</button>
         </form>
       </div>
 
-      <div className="menucolumn">
-        <h3>Today’s Menu</h3>
-        <div className="todaymenu">
-          {menuList.length === 0 && <p>No menu items available today.</p>}
-          {menuList.map((item) => (
-            <div key={item._id} className="menu-card">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="menu-image"
-              />
-              <h4>{item.name}</h4>
-              <p>Price: Rs. {item.price}</p>
-            </div>
-          ))}
-        </div>
+      {/* ALL MENU ITEMS */}
+      <h2 style={{ textAlign: "center", marginTop: "30px" }}>All Menu Items</h2>
+      <div className="menu-list">
+        {menuList.length === 0 && <p style={{ textAlign: "center" }}>No menu items yet</p>}
+        {menuList.map((item) => (
+          <div className="menu-card" key={item._id}>
+            <img src={item.image} alt={item.name} />
+            <h3>{item.name}</h3>
+            <p>Price: Rs. {item.price}</p>
+          </div>
+        ))}
       </div>
     </div>
   );

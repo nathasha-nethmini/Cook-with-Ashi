@@ -15,7 +15,7 @@ function Header() {
             <h1>Cook with Ashi</h1>
             <h2 id="subtitle">Enjoy your homemade, healthy lunch delivered daily in Badulla.</h2>
             <span id="navbar">
-                <Link to="/">Home</Link>
+                {/* <Link to="/">Home</Link> */}
                 <Link to="/about">About</Link>
                 <Link to="/order" target='blank'>Order</Link>
                 <Link to="/contact">Contact</Link>

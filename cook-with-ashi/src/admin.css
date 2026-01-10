@@ -73,6 +73,14 @@ h1{
     float:right;
     margin-top: 30px;
 }
+#logout:hover{
+    background-color: rgba(2, 2, 2, 0.651);
+    color: white;
+    border-radius: 5px;
+    padding: 5px;
+    float:right;
+    margin-top: 30px;
+}
 nav{
     position:fixed;
     width: 100%;
@@ -202,4 +210,11 @@ nav a:hover{
 
 .delete-btn:hover {
   background: #d9363e;
+}
+
+
+/* SweetAlert2 popup large text */
+.popup-large-text {
+  font-size: 20px !important;
+  text-align: center;
 }

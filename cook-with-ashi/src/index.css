@@ -157,24 +157,21 @@ header a:hover{
 }
 
 /*this is css for order*/
-.menucolumn{
-  display:block;
-  color:  rgb(51, 51, 51);
-  padding:5px;
-}
+
 
 .order{
   display: grid;
-  grid-template-columns: 1fr 1fr;
   justify-content: center;
   margin:2px;
-  gap:3px;
 }
 .order > .orderform{
   padding:5px;
   flex: 2;
-  padding: 2rem;
+  padding: 3rem;
   border-radius: 10px;
+  padding-left: 4rem;
+  margin-left: 3rem;
+  box-shadow: #333 3px 2px 5px;
   
 }
 .order label{
@@ -183,7 +180,7 @@ header a:hover{
 }
 .orderform h2 {
   margin-bottom: 0.5rem;
-  font-size: 1.8rem;
+  font-size: 2rem;
   color: #333;
 }
 select {
@@ -220,4 +217,22 @@ select {
 }
 .order button:active{
    background-color: rgba(255, 140, 0, 0.462);
+}
+#logout{
+    background-color: rgb(2, 2, 2);
+    color: white;
+    border-radius: 5px;
+    padding: 5px;
+    float:right;
+    margin-top: 5rem;
+    position: relative;
+    float:right
+}
+#logout:hover{
+    background-color: rgba(2, 2, 2, 0.651);
+    color: white;
+    border-radius: 5px;
+    padding: 5px;
+    float:right;
+    margin-top: 30px;
 }
