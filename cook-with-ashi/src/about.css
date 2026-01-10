@@ -153,3 +153,16 @@ margin-top: -2rem;
   color:hsl(0, 0%, 50%);
   cursor: pointer;
 }
+.about {
+  padding: 20px;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+.about h2 {
+  margin-bottom: 10px;
+}
+
+.about p {
+  margin-bottom: 8px;
+}

@@ -81,10 +81,14 @@ export default function Order() {
 
   return (
     <div className="order">
+      
       <button id="logout" onClick={home}>
         Home
       </button>
       <div className="orderform">
+        <video autoPlay loop muted className="bg-videoform">
+        <source src="/kitchen.mp4" type="video/mp4" />
+      </video>
         <h2>Place an Order</h2>
         <p>Choose your meal and complete the order form.</p>
         <form onSubmit={submitOrder}>
@@ -110,7 +114,10 @@ export default function Order() {
               required
             />
           </label>
-          <br />
+          <p className="note">
+            * Enter the delivery address clearly.
+          </p>
+         
 
           <label>
             Landmark
@@ -135,7 +142,7 @@ export default function Order() {
           </label>
           <br />
           <p className="note">
-            * Please add a valid number. You will receive a WhatsApp notification once the order is processed.
+            * Enter a valid phone number. You will get a WhatsApp message when your order is confirmed, and a call when the food is delivered.
           </p>
 
           <label>
@@ -160,7 +167,8 @@ export default function Order() {
       </div>
 
       {/* ALL MENU ITEMS */}
-      <h2 style={{ textAlign: "center", marginTop: "30px" }}>All Menu Items</h2>
+  
+      <h2 style={{ textAlign: "center", marginTop: "3rem" }}>All Menu Items</h2>
       <div className="menu-list">
         {menuList.length === 0 && <p style={{ textAlign: "center" }}>No menu items yet</p>}
         {menuList.map((item) => (

@@ -95,7 +95,7 @@ header a:hover{
 .login-box {
   align-content: center;
   height:80%;
-  width:400px;
+  width:50%;
   align-items: center;
   margin: 100px auto;
   padding: 10px;
@@ -156,6 +156,15 @@ header a:hover{
   z-index: -1; /* behind the form */
 }
 
+.bg-videoform {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* cover entire screen */
+  z-index: -1; /* behind the form */
+}
 /*this is css for order*/
 
 
@@ -170,8 +179,9 @@ header a:hover{
   padding: 3rem;
   border-radius: 10px;
   padding-left: 4rem;
-  margin-left: 3rem;
   box-shadow: #333 3px 2px 5px;
+  background-color: #fbfbfb97;
+  border:none;
   
 }
 .order label{
@@ -193,7 +203,7 @@ select {
 }
 .orderform p {
   margin-bottom: 1.5rem;
-  color: #555;
+  color: #3f3e3e;
   font-size: 0.95rem;
 }
 

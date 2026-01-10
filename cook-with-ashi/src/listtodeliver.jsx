@@ -23,7 +23,7 @@ function Admin() {
         thirtyDaysAgo.setDate(today.getDate() - 30);
 
         const adminOrders = data.filter(order => 
-            order.meal.toLowerCase() !== "Lunch" &&
+            order.meal.toLowerCase() !== "lunch" &&
             new Date(order.date) >= thirtyDaysAgo
         )  .sort((a, b) => new Date(b.date) - new Date(a.date));
 

@@ -12,8 +12,9 @@ export default function Contact() {
         <ul>
               <Link to="/">Home</Link>
               <Link to="/about">About</Link>
-              <Link to="/order" target='blank'>Order</Link>
-              <Link to="/contact">Contact</Link></ul>
+              {/* <Link to="/order" target='blank'>Order</Link>
+          <Link to="/contact">Contact</Link> */}
+        </ul>
       </span>
     <div className="contact">
       <div className="contact-box">
