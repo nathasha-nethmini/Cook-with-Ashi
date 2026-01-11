@@ -76,7 +76,7 @@ function Admin() {
   return (
     <div style={{ padding: "20px" }}>
       <nav>
-        <Link to="/listtodeliver">Orders to Deliver</Link>
+        <Link to="/admin">Admin Home page</Link>
         <Link to="/post">Posts</Link>
       </nav>
 
@@ -84,10 +84,10 @@ function Admin() {
         Logout
       </button>
 
-      <h1>Admin Dashboard</h1>
+      <h1>Orders</h1>
 
       {orders.length === 0 ? (
-        <p>No orders today</p>
+        <p>No orders</p>
       ) : (
         <table className="orders-table">
           <thead>
