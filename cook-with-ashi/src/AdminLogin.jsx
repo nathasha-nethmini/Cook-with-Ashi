@@ -19,7 +19,7 @@ function AdminLogin() {
         return;
       }
 
-      if (password === ADMIN_PASS) {
+      if (password === ADMIN_PASS && username===ADMIN_USER) {
 
         // navigate first, then show alert after a short delay so the admin page can render
         navigate("/admin");
@@ -41,7 +41,7 @@ function AdminLogin() {
       </video>
       <form onSubmit={handleLogin} className="login-box">
         <h2>Admin Login</h2>
-        <img src='/favicon.ico'  alt="icon"></img>
+        <img src='/favicon.ico'  alt="icon" className="loginimg"></img>
         
 
         <input
