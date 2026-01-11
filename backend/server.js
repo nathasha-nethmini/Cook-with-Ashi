@@ -129,11 +129,20 @@ app.delete("/api/menu/:id", async (req, res) => {
 app.patch("/api/orders/:id/status", async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, deliveryDate } = req.body;
+
+    const updateData = {
+      status,
+    };
+
+    // Save delivery date only when confirmed
+    if (status === "Confirmed" && deliveryDate) {
+      updateData.deliveryDate = new Date(deliveryDate);
+    }
 
     const result = await ordersCollection.updateOne(
       { _id: new ObjectId(id) },
-      { $set: { status, updatedAt: new Date() } }
+      { $set: updateData }
     );
 
     if (result.matchedCount === 0) {
@@ -145,6 +154,7 @@ app.patch("/api/orders/:id/status", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 
 /* ---------- START SERVER ---------- */
