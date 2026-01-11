@@ -1,5 +1,11 @@
 import "./about.css";
 import { Link } from "react-router-dom";
+import img3 from "./assets/3.png";
+import img4 from "./assets/4.png";
+import img5 from "./assets/4.png";
+import img6 from "./assets/3.png";
+import img7 from "./assets/4.png";
+import img8 from "./assets/4.png";
 
 
 function About() {
@@ -48,16 +54,20 @@ function About() {
               </p>
               <p>
                 Once your order reaches your place, you will also receive a <strong>WhatsApp call</strong>.
-              </p>
+        </p>
+        <h4><b>Free delivery – Badulla area.</b></h4>
             </div>
 
-            <div className="box">
-            <div className="box1"></div>
-            <div className="box2"></div>
-            <div className="box3"></div>
-            <div className="box4"></div>
-            <div className="box5"></div>
-            <div className="box6"></div></div>
+      <div className="box">
+        
+          <div className="box1"><img src={img3} alt="image" /></div>
+
+            <div className="box2"><img src={img4} alt="image" /></div>
+            <div className="box3"><img src={img5} alt="image" /></div>
+            <div className="box4"><img src={img6} alt="image" /></div>
+            <div className="box5"><img src={img7} alt="image" /></div>
+        <div className="box6"><img src={img8} alt="image" /></div>
+      </div>
         </div>
     );
 }
