@@ -52,7 +52,7 @@ const upload = multer({ storage });
 /* ---------- ORDER ROUTES ---------- */
 app.post("/api/order", async (req, res) => {
   try {
-    const newOrder = { ...req.body, status: "Pending",date: new Date() };
+    const newOrder = { ...req.body, status: "Pending",date: new Date()};
     await ordersCollection.insertOne(newOrder);
     sendAdminWhatsApp(newOrder);
     res.json({ success: true });

@@ -218,3 +218,24 @@ nav a:hover{
   font-size: 20px !important;
   text-align: center;
 }
+/* Row colors based on status */
+.confirmed-row {
+  background-color: #3bcd62; /* light yellow */
+}
+
+.declined-row {
+  background-color: #fa594a; /* light red */
+}
+
+.pending-row {
+  background-color: #f0f0f0; /* light gray for pending */
+}
+
+/* Optional: style for the status text */
+.status .confirmed {
+  font-weight: bold;
+}
+
+.status .declined {
+  font-weight: bold;
+}

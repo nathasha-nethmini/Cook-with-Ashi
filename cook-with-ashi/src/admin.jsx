@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import "./admin.css";
 import { useNavigate, Link } from "react-router-dom";
+import "./admin.css";
 
 function Admin() {
   const navigate = useNavigate();
@@ -42,9 +42,7 @@ function Admin() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/orders`
-        );
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`);
         const data = await res.json();
 
         const today = new Date().toISOString().split("T")[0];
@@ -105,28 +103,31 @@ function Admin() {
 
           <tbody>
             {orders.map((order, index) => {
-              const phoneNumber =
-                "94" + order.phone.replace(/[^0-9]/g, "");
-
-              const confirmMsg = encodeURIComponent(
-                `Hello ${order.name}, your order for ${order.meal} has been confirmed.`
-              );
-
-              const declineMsg = encodeURIComponent(
-                `Dear ${order.name}, we regret to inform you that your order for ${order.meal} has been declined.`
-              );
-
-              const whatsappConfirm = `https://wa.me/${phoneNumber}?text=${confirmMsg}`;
-              const whatsappDecline = `https://wa.me/${phoneNumber}?text=${declineMsg}`;
-
               const date = new Date(order.date);
-              const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString(
-                [],
-                { hour: "2-digit", minute: "2-digit" }
+              const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}`;
+
+              // WhatsApp links
+              const phoneNumber = "94" + order.phone.replace(/[^0-9]/g, "");
+              const whatsappConfirm = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+                `Hello ${order.name}, your order for ${order.meal} has been confirmed. We will deliver it to ${order.address} around 2-3 p.m. You will receive a call when the order arrives. If you have any special instructions or questions, feel free to reply to this message.`
+              )}`;
+              const whatsappDecline = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+                `Dear ${order.name}, we’re sorry, but we cannot send your order (${order.meal}: ${order.orderName}) at this time. If you have any questions or special requests, please feel free to reply to this message. We apologize for the inconvenience.`
               )}`;
 
+              // Row color based on status
+              const rowClass =
+                order.status === "Confirmed"
+                  ? "confirmed-row"
+                  : order.status === "Declined"
+                  ? "declined-row"
+                  : "pending-row";
+
               return (
-                <tr key={order._id}>
+                <tr key={order._id} className={rowClass}>
                   <td>{index + 1}</td>
                   <td>{formattedDate}</td>
                   <td>{order.name}</td>
@@ -138,11 +139,9 @@ function Admin() {
                     {order.status === "Confirmed" && (
                       <span className="confirmed">Confirmed</span>
                     )}
-
                     {order.status === "Declined" && (
                       <span className="declined">Declined</span>
                     )}
-
                     {(!order.status || order.status === "Pending") && (
                       <>
                         <button
@@ -154,7 +153,6 @@ function Admin() {
                         >
                           Confirm
                         </button>
-
                         <button
                           className="status2"
                           onClick={() => {
