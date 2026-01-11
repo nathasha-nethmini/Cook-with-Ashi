@@ -7,80 +7,87 @@ function Admin() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  /* ---------- LOGOUT ---------- */
   const logout = () => {
     navigate("/");
   };
 
-  // Update order status in backend & frontend
+  /* ---------- UPDATE ORDER STATUS ---------- */
   const updateStatus = async (id, newStatus) => {
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/orders/${id}/status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/orders/${id}/status`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        }
+      );
 
-      // Update frontend state immediately
-      setOrders(
-        orders.map((order) =>
+      if (!res.ok) throw new Error("Failed to update status");
+
+      // Update UI immediately
+      setOrders((prev) =>
+        prev.map((order) =>
           order._id === id ? { ...order, status: newStatus } : order
         )
       );
     } catch (err) {
-      console.error("Failed to update status:", err);
-      alert("Failed to update status");
+      console.error(err);
+      alert("Failed to update order status");
     }
   };
 
+  /* ---------- FETCH ORDERS ---------- */
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`);
-        if (!res.ok) throw new Error("Network response was not ok");
-
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/orders`
+        );
         const data = await res.json();
 
-        const today = new Date();
-        const todayString = today.toISOString().split("T")[0];
+        const today = new Date().toISOString().split("T")[0];
 
-        // Filter only lunch orders of today and sort by time
-        const adminOrders = data
+        const todayLunchOrders = data
           .filter(
             (order) =>
-              order.meal.toLowerCase() === "lunch" &&
-              order.date.split("T")[0] === todayString
+              order.meal?.toLowerCase() === "lunch" &&
+              order.date?.split("T")[0] === today
           )
           .sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        setOrders(adminOrders);
+        setOrders(todayLunchOrders);
       } catch (err) {
-        console.error("Error fetching orders:", err);
+        console.error("Fetch error:", err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchOrders();
-    const interval = setInterval(fetchOrders, 10000); // Refresh every 10 sec
+    const interval = setInterval(fetchOrders, 10000);
     return () => clearInterval(interval);
   }, []);
 
   if (loading) return <p>Loading orders...</p>;
 
+  /* ---------- UI ---------- */
   return (
     <div style={{ padding: "20px" }}>
       <nav>
         <Link to="/listtodeliver">Orders to Deliver</Link>
         <Link to="/post">Posts</Link>
       </nav>
+
       <button id="logout" onClick={logout}>
         Logout
       </button>
 
-      <h1>Admin Home page</h1>
+      <h1>Admin Dashboard</h1>
 
       {orders.length === 0 ? (
-        <p>No orders</p>
+        <p>No orders today</p>
       ) : (
         <table className="orders-table">
           <thead>
@@ -95,29 +102,31 @@ function Admin() {
               <th>Status</th>
             </tr>
           </thead>
+
           <tbody>
             {orders.map((order, index) => {
-              const phoneNumber = "94" + order.phone.replace(/[^0-9]/g, "");
+              const phoneNumber =
+                "94" + order.phone.replace(/[^0-9]/g, "");
 
-              const message1 = encodeURIComponent(
+              const confirmMsg = encodeURIComponent(
                 `Hello ${order.name}, your order for ${order.meal} has been confirmed.`
               );
-              const message2 = encodeURIComponent(
-                `Dear ${order.name}, we regret to inform you that your order for ${order.meal} has been canceled due to unavoidable circumstances. We sincerely apologize for the inconvenience.`
-              );
-              const whatsappURL1 = `https://wa.me/${phoneNumber}?text=${message1}`;
-              const whatsappURL2 = `https://wa.me/${phoneNumber}?text=${message2}`;
 
-              const orderDate = new Date(order.date);
-              const formattedDate = `${orderDate.getFullYear()}/${
-                orderDate.getMonth() + 1
-              }/${orderDate.getDate()} ${orderDate.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}`;
+              const declineMsg = encodeURIComponent(
+                `Dear ${order.name}, we regret to inform you that your order for ${order.meal} has been declined.`
+              );
+
+              const whatsappConfirm = `https://wa.me/${phoneNumber}?text=${confirmMsg}`;
+              const whatsappDecline = `https://wa.me/${phoneNumber}?text=${declineMsg}`;
+
+              const date = new Date(order.date);
+              const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString(
+                [],
+                { hour: "2-digit", minute: "2-digit" }
+              )}`;
 
               return (
-                <tr key={index}>
+                <tr key={order._id}>
                   <td>{index + 1}</td>
                   <td>{formattedDate}</td>
                   <td>{order.name}</td>
@@ -126,38 +135,37 @@ function Admin() {
                   <td>{order.address}</td>
                   <td>{order.landmark}</td>
                   <td className="status">
-                    {/* Show current status if confirmed or declined */}
                     {order.status === "Confirmed" && (
                       <span className="confirmed">Confirmed</span>
                     )}
+
                     {order.status === "Declined" && (
                       <span className="declined">Declined</span>
                     )}
 
-                    {/* Show buttons only if status is Pending or undefined */}
-                    {!order.status || order.status === "Pending" ? (
+                    {(!order.status || order.status === "Pending") && (
                       <>
-                        <a
-                          href={whatsappURL1}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() =>
-                            updateStatus(order._id, "Confirmed")
-                          }
+                        <button
+                          className="status1"
+                          onClick={() => {
+                            updateStatus(order._id, "Confirmed");
+                            window.open(whatsappConfirm, "_blank");
+                          }}
                         >
-                          <button className="status1">Confirm</button>
-                        </a>
+                          Confirm
+                        </button>
 
-                        <a
-                          href={whatsappURL2}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() => updateStatus(order._id, "Declined")}
+                        <button
+                          className="status2"
+                          onClick={() => {
+                            updateStatus(order._id, "Declined");
+                            window.open(whatsappDecline, "_blank");
+                          }}
                         >
-                          <button className="status2">Decline</button>
-                        </a>
+                          Decline
+                        </button>
                       </>
-                    ) : null}
+                    )}
                   </td>
                 </tr>
               );
