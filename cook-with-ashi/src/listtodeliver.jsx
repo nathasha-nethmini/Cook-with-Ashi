@@ -102,7 +102,9 @@ function Admin() {
               <th>Time</th>
               <th>Name</th>
               <th>Phone</th>
-              <th>Meal</th>
+                <th>Meal</th>
+                <th>count</th>
+                <th>special</th>
               <th>Address</th>
               <th>Landmark</th>
               <th>Delivery Date</th>
@@ -134,6 +136,8 @@ function Admin() {
                   <td>{order.name}</td>
                   <td>{order.phone}</td>
                   <td>{order.meal}</td>
+                  <td>{order.count}</td>
+                  <td>{order.special}</td>
                   <td>{order.address}</td>
                   <td>{order.landmark}</td>
                   <td>

@@ -8,7 +8,9 @@ export default function Order() {
   const [landmark, setLandmark] = useState("");
   const [phone, setPhone] = useState("");
   const [meal, setMeal] = useState("");
+  const [count, setCount] = useState("1");
   const [menuList, setMenuList] = useState([]); // store menu from DB
+  const [special, setSpecial] = useState("");
   const navigate = useNavigate();
   
   const home = () => {
@@ -35,7 +37,7 @@ export default function Order() {
 
   const submitOrder = async (e) => {
     e.preventDefault();
-    const orderData = { name, address, landmark, phone, meal };
+    const orderData = { name, address, landmark, phone, meal, count, special };
 
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/order`, {
@@ -117,7 +119,7 @@ export default function Order() {
           <p className="note">
             * Enter the delivery address clearly.
           </p>
-         
+
 
           <label>
             Landmark
@@ -129,7 +131,6 @@ export default function Order() {
             />
           </label>
           <br />
-
           <label>
             Phone
             <input
@@ -154,13 +155,26 @@ export default function Order() {
                 </option>
               ))}
             </select>
-          </label>
-          <br />
-          <br />
-
+          </label><br/>
           <label>
-            Order Status <input type="text" value="Pending..." readOnly />
+            Quantity
+            <input
+              type="number"
+              value={count}
+              onChange={(e) => setCount(e.target.value)} 
+              min={1}/>
           </label>
+          <br />
+          <br />
+          <label>
+            Special Request 
+            <textarea
+              value={special}
+              placeholder="Any special request?"
+              onChange={(e) => setSpecial(e.target.value)}
+            />
+          </label>
+          
           <br />
           <button type="submit">Submit Order</button>
         </form>
