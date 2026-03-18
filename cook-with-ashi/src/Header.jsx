@@ -4,9 +4,9 @@ function Header() {
     const welcomeText = 'WELCOME...!';
     return (
         <header>
-            <div style={{ display: "grid", gridTemplateColumns: "50% 50%" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.8rem" }}>
             <img id="icon" src="/favicon.ico" alt="cook with Ashi icon" />
-            <Link to="/admin-login" target='blank'><button id='admin' >admin</button></Link></div>
+            <Link to="/admin-login" target="_blank" rel="noopener noreferrer"><button id='admin' >Admin</button></Link></div>
             <h2 className="welcome">
                 {Array.from(welcomeText).map((ch, i) => (
                     <span key={i} className="letter" style={{ ['--i']: i }}>{ch}</span>
@@ -17,7 +17,7 @@ function Header() {
             <span id="navbar">
                 {/* <Link to="/">Home</Link> */}
                 <Link to="/about">About</Link>
-                <Link to="/order" target='blank'>Order</Link>
+                <Link to="/order" target="_blank" rel="noopener noreferrer">Order</Link>
                 <Link to="/contact">Contact</Link>
             </span>
             

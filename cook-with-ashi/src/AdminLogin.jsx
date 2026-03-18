@@ -22,7 +22,7 @@ function AdminLogin() {
       if (password === ADMIN_PASS && username===ADMIN_USER) {
 
         // navigate first, then show alert after a short delay so the admin page can render
-        navigate("/admin");
+        navigate("/0000011111112222222333333");
         setError("");
         setTimeout(() => {
           alert("Login successful ✅");

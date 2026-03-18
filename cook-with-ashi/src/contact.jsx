@@ -1,21 +1,16 @@
 import './contact.css';
 import { Link } from "react-router-dom";
 export default function Contact() {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert("Thank you for contacting us! We will get back to you soon.");
-  };
-
   return (
     <>
-    <span id="nav">
+    <nav id="nav">
         <ul>
-              <Link to="/">Home</Link>
-              <Link to="/about">About</Link>
+              <li><Link to="/">Home</Link></li>
+              <li><Link to="/about">About</Link></li>
               {/* <Link to="/order" target='blank'>Order</Link>
           <Link to="/contact">Contact</Link> */}
         </ul>
-      </span>
+      </nav>
     <div className="contact">
       <div className="contact-box">
         <h2>Contact Us</h2>

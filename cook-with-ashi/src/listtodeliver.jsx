@@ -82,7 +82,7 @@ function Admin() {
   return (
     <div style={{ padding: "20px" }}>
       <nav>
-        <Link to="/admin">Admin Home page</Link>
+        <Link to="/0000011111112222222333333">Admin Home page</Link>
         <Link to="/post">Posts</Link>
       </nav>
 

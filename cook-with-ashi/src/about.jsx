@@ -29,7 +29,7 @@ function About() {
           <nav id="navbar">
                 <Link to="/">Home</Link>
                 {/* <Link to="/about">About</Link> */}
-                <Link to="/order" target='_blank'>Order</Link>
+                <Link to="/order" target="_blank" rel="noopener noreferrer">Order</Link>
                 <Link to="/contact">Contact</Link>
           </nav>
           <div className="about-content">
@@ -60,13 +60,13 @@ function About() {
 
       <div className="box">
         
-          <div className="box1"><img src={img3} alt="image" /></div>
+          <div className="box1"><img src={img3} alt="Cooked meal 1" /></div>
 
-            <div className="box2"><img src={img4} alt="image" /></div>
-            <div className="box3"><img src={img5} alt="image" /></div>
-            <div className="box4"><img src={img6} alt="image" /></div>
-            <div className="box5"><img src={img7} alt="image" /></div>
-        <div className="box6"><img src={img8} alt="image" /></div>
+            <div className="box2"><img src={img4} alt="Cooked meal 2" /></div>
+            <div className="box3"><img src={img5} alt="Cooked meal 3" /></div>
+            <div className="box4"><img src={img6} alt="Cooked meal 4" /></div>
+            <div className="box5"><img src={img7} alt="Cooked meal 5" /></div>
+        <div className="box6"><img src={img8} alt="Cooked meal 6" /></div>
       </div>
         </div>
     );
