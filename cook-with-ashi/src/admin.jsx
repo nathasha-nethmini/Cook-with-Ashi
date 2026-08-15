@@ -58,6 +58,16 @@ function Admin() {
         }
         const data = await res.json();
 
+        if (!res.ok) {
+          throw new Error(data.error || data.msg || "Failed to fetch orders");
+        }
+
+        if (!Array.isArray(data)) {
+          console.error("Expected array from API, but got:", data);
+          setOrders([]);
+          return;
+        }
+
         const today = new Date().toISOString().split("T")[0];
 
         const todayLunchOrders = data
@@ -81,11 +91,11 @@ function Admin() {
     return () => clearInterval(interval);
   }, []);
 
-  if (loading) return <p>Loading orders...</p>;
-
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [updateMsg, setUpdateMsg] = useState("");
+
+  if (loading) return <p>Loading orders...</p>;
 
   const handleUpdateCredentials = async (e) => {
     e.preventDefault();

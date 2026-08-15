@@ -13,6 +13,7 @@ function Admin() {
 
   /* ---------- LOGOUT ---------- */
   const logout = () => {
+    localStorage.removeItem("token");
     navigate("/");
   };
 
@@ -63,6 +64,16 @@ function Admin() {
         }
 
         const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || data.msg || "Failed to fetch orders");
+        }
+
+        if (!Array.isArray(data)) {
+          console.error("Expected array from API, but got:", data);
+          setOrders([]);
+          return;
+        }
 
         const today = new Date();
         const thirtyDaysAgo = new Date();
