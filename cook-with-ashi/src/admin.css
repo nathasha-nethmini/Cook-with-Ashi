@@ -1,125 +1,147 @@
+/* ---------- ADMIN NAVIGATION ---------- */
 nav {
   position: sticky;
-  top: 0;
-  z-index: 20;
-  width: min(1100px, calc(100% - 2rem));
-  margin: 0.75rem auto 0;
+  top: 1rem;
+  z-index: 50;
+  max-width: 1200px;
+  margin: 0 auto 2rem;
   display: flex;
-  gap: 0.7rem;
+  gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
-  padding: 0.6rem;
-  border-radius: 12px;
-  background: rgba(255, 249, 240, 0.9);
-  border: 1px solid #e0c5a6;
-  backdrop-filter: blur(6px);
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  background: var(--surface-glass);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  animation: fadeInUp 0.5s ease-out;
 }
 
 nav a {
-  padding: 0.5rem 0.95rem;
+  padding: 0.6rem 1.2rem;
   border-radius: 999px;
-  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
   text-decoration: none;
-  color: #3a2412;
-  background: #f4e2ca;
-  border: 1px solid #dbbf9a;
-  box-shadow: 0 4px 10px rgba(57, 31, 14, 0.12);
-  transition: all 0.2s ease;
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(212, 111, 54, 0.2);
+  transition: var(--transition);
 }
 
 nav a:hover {
   transform: translateY(-2px);
-  background: #ecd2ae;
+  background: rgba(212, 111, 54, 0.1);
+  color: var(--primary);
+  border-color: var(--primary);
 }
 
 h1 {
-  margin: 1.2rem 0 0.8rem;
   text-align: center;
-  color: #2d1f14;
+  color: var(--primary);
+  font-size: 2.5rem;
+  margin: 2rem 0;
 }
 
+/* ---------- ADMIN TABLES ---------- */
 .orders-table {
   width: 100%;
-  margin-top: 1rem;
-  border-collapse: collapse;
+  margin-top: 2rem;
+  border-collapse: separate;
+  border-spacing: 0;
   overflow: hidden;
-  border-radius: 14px;
-  background: rgba(255, 252, 248, 0.95);
-  border: 1px solid #dbc1a2;
-  box-shadow: 0 10px 24px rgba(53, 31, 16, 0.12);
+  border-radius: var(--radius-md);
+  background: var(--surface-glass);
+  backdrop-filter: blur(10px);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  animation: fadeInUp 0.6s ease-out;
 }
 
 .orders-table th,
 .orders-table td {
-  padding: 0.55rem;
+  padding: 1.2rem 1rem;
   text-align: left;
-  border-bottom: 1px solid #ecdac5;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
 .orders-table th {
-  background: #f6e6d3;
-  color: #3b2614;
+  background: rgba(212, 111, 54, 0.05);
+  color: var(--text-muted);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+}
+
+.orders-table tr {
+  transition: background 0.2s ease;
+}
+
+.orders-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .confirmed-row {
-  background-color: #edf8e8 !important;
+  background-color: rgba(72, 187, 120, 0.05) !important;
 }
 
 .declined-row {
-  background-color: #fdeaea !important;
+  background-color: rgba(245, 101, 101, 0.05) !important;
 }
 
 .pending-row {
-  background-color: #fff7df !important;
+  background-color: rgba(237, 137, 54, 0.05) !important;
+}
+
+/* Status Badges */
+.status .confirmed, .status .declined {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .status .confirmed {
-  font-weight: 700;
-  color: #1f6e3d;
+  background: rgba(72, 187, 120, 0.15);
+  color: #276749;
 }
 
 .status .declined {
-  font-weight: 700;
-  color: #ac1d2f;
+  background: rgba(245, 101, 101, 0.15);
+  color: #9b2c2c;
 }
 
-.status1,
-.status2,
-.status3,
-.delete-btn,
-.details button {
+/* Action Buttons */
+.status1, .status2, .delete-btn {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  padding: 0.42rem 0.7rem;
-  font-size: 0.84rem;
-  font-weight: 700;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: var(--transition);
+  margin-right: 0.5rem;
 }
 
 .status1 {
-  background: #287440;
-  color: #fff;
+  background: #48bb78;
+  color: white;
 }
+.status1:hover { background: #38a169; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(72,187,120,0.3); }
 
-.status1:hover {
-  background: #1f5c32;
+.status2, .delete-btn {
+  background: #f56565;
+  color: white;
 }
-
-.status2,
-.delete-btn {
-  background: #b13b3f;
-  color: #fff;
-}
-
-.status2:hover,
-.delete-btn:hover {
-  background: #972e32;
-}
-
-.status3 {
-  background: #3b438a;
-  color: #fff;
-}
+.status2:hover, .delete-btn:hover { background: #e53e3e; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(245,101,101,0.3); }
 
 .orders-table input[type="date"],
 .details input,
@@ -127,62 +149,34 @@ h1 {
 .menu-card input[type="number"],
 .menu-card input[type="file"] {
   width: 100%;
-  margin-top: 0.45rem;
+  margin-top: 0.5rem;
   border-radius: 8px;
-  border: 1px solid #ceb395;
-  padding: 0.5rem 0.55rem;
-  background: #fff;
+  border: 1px solid rgba(0,0,0,0.1);
+  padding: 0.7rem;
+  background: rgba(255,255,255,0.8);
+  font-family: 'Inter', sans-serif;
 }
 
-.menu-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 1rem;
-  padding: 0.8rem 0;
+.orders-table input[type="date"]:focus,
+.details input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(212, 111, 54, 0.1);
 }
 
-.menu-card {
-  width: 100%;
-  margin-top: 0;
-  padding: 0.9rem;
-  border-radius: 14px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e0c7a9;
-  background: #fffefb;
-  text-align: center;
-}
-
-.menu-card img,
-.image-box img {
-  width: 100%;
-  border-radius: 10px;
-  object-fit: cover;
-  aspect-ratio: 4 / 3;
+.image-box {
+  background: rgba(0,0,0,0.02);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px dashed rgba(0,0,0,0.1);
 }
 
 .placeholder {
   min-height: 180px;
   display: grid;
   place-items: center;
-  border-radius: 10px;
-  background: #f6ece0;
-  color: #6d563f;
-}
-
-.details button {
-  margin-top: 0.65rem;
-  width: 100%;
-  background: #2f2115;
-  color: #fff;
-}
-
-.details button:hover {
-  background: #1d140d;
-}
-
-.popup-large-text {
-  font-size: 1.05rem !important;
-  text-align: center;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
 @media (max-width: 900px) {
@@ -190,22 +184,5 @@ h1 {
     display: block;
     overflow-x: auto;
     white-space: nowrap;
-  }
-}
-
-@media (max-width: 640px) {
-  nav {
-    width: calc(100% - 1rem);
-    margin-top: 0.5rem;
-  }
-
-  nav a {
-    font-size: 0.9rem;
-  }
-
-  .orders-table th,
-  .orders-table td {
-    font-size: 0.82rem;
-    padding: 0.45rem;
   }
 }

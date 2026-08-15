@@ -9,7 +9,7 @@ function Header() {
             <Link to="/admin-login" target="_blank" rel="noopener noreferrer"><button id='admin' >Admin</button></Link></div>
             <h2 className="welcome">
                 {Array.from(welcomeText).map((ch, i) => (
-                    <span key={i} className="letter" style={{ ['--i']: i }}>{ch}</span>
+                    <span key={i} className="fade-letter" style={{ animationDelay: `${i * 0.05}s` }}>{ch}</span>
                 ))}
             </h2>
             <h1>Cook with Ashi</h1>
