@@ -348,3 +348,5 @@ header h1 {
   .order > .orderform { padding: 1.5rem; }
   header h1 { font-size: 2rem; }
 }
+.fade-letter { display: inline-block; opacity: 0; animation: fadeInLetter 1s forwards; color: var(--primary); }
+@keyframes fadeInLetter { to { opacity: 1; transform: translateY(0); } }
