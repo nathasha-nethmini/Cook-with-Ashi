@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./Home";
 import Admin from "./admin";
 import AdminLogin from "./AdminLogin";
@@ -9,18 +9,23 @@ import Post from "./post";
 import Listtodeliver from "./listtodeliver";
 
 
+function ProtectedRoute({ children }) {
+  const token = localStorage.getItem("token");
+  return token ? children : <Navigate to="/admin-login" />;
+}
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/admin-login" element={<AdminLogin />} />
-        <Route path="/0000011111112222222333333" element={<Admin />} />
+        <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
         <Route path="/order" element={<Order />} />
         <Route path="/about" element={<About />} />
-        <Route path="/post" element={<Post/>} />
+        <Route path="/post" element={<ProtectedRoute><Post/></ProtectedRoute>} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/listtodeliver" element={<Listtodeliver/>} />
+        <Route path="/listtodeliver" element={<ProtectedRoute><Listtodeliver/></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

@@ -9,6 +9,7 @@ function Admin() {
 
   /* ---------- LOGOUT ---------- */
   const logout = () => {
+    localStorage.removeItem("token");
     navigate("/");
   };
 
@@ -19,7 +20,10 @@ function Admin() {
         `${import.meta.env.VITE_API_URL}/api/orders/${id}/status`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+          },
           body: JSON.stringify({ status: newStatus }),
         }
       );
@@ -42,7 +46,16 @@ function Admin() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+          }
+        });
+        if (res.status === 401) {
+          // Token expired or invalid
+          logout();
+          return;
+        }
         const data = await res.json();
 
         const today = new Date().toISOString().split("T")[0];
@@ -70,6 +83,33 @@ function Admin() {
 
   if (loading) return <p>Loading orders...</p>;
 
+  const [newUsername, setNewUsername] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [updateMsg, setUpdateMsg] = useState("");
+
+  const handleUpdateCredentials = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/update-credentials`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({ username: newUsername, password: newPassword })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setUpdateMsg("Credentials updated! Please login again.");
+        setTimeout(logout, 2000);
+      } else {
+        setUpdateMsg(data.error || "Update failed");
+      }
+    } catch (err) {
+      setUpdateMsg("Error updating credentials");
+    }
+  };
+
   /* ---------- UI ---------- */
   return (
     <div style={{ padding: "20px" }}>
@@ -81,6 +121,16 @@ function Admin() {
       <button id="logout" onClick={logout}>
         Logout
       </button>
+
+      <div style={{ marginTop: "20px", marginBottom: "20px", padding: "15px", border: "1px solid #ccc", borderRadius: "8px", maxWidth: "400px" }}>
+        <h3>Update Admin Credentials</h3>
+        <form onSubmit={handleUpdateCredentials}>
+          <input type="text" placeholder="New Username" required value={newUsername} onChange={(e) => setNewUsername(e.target.value)} style={{ display: 'block', marginBottom: '10px', width: '100%', padding: '8px' }} />
+          <input type="password" placeholder="New Password" required value={newPassword} onChange={(e) => setNewPassword(e.target.value)} style={{ display: 'block', marginBottom: '10px', width: '100%', padding: '8px' }} />
+          <button type="submit">Update & Relogin</button>
+        </form>
+        {updateMsg && <p style={{ color: 'blue', marginTop: '10px' }}>{updateMsg}</p>}
+      </div>
 
       <h1>Admin Dashboard</h1>
 

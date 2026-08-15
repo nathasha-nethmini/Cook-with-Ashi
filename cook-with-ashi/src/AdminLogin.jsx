@@ -1,36 +1,43 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const ADMIN_USER = import.meta.env.VITE_ADMIN_USER;
-const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS;
-
 function AdminLogin() {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-
-      // ensure password is configured
-      if (!ADMIN_PASS) {
-        setError("Admin password not configured. Please set VITE_ADMIN_PASS in .env and restart the dev server.");
-        return;
-      }
-
-      if (password === ADMIN_PASS && username===ADMIN_USER) {
-
-        // navigate first, then show alert after a short delay so the admin page can render
-        navigate("/0000011111112222222333333");
+        setLoading(true);
         setError("");
-        setTimeout(() => {
-          alert("Login successful ✅");
-        }, 150);
-        return;
-      }
 
-      setError("Invalid password ❌");
+        try {
+            const response = await fetch("http://localhost:5000/api/admin/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Save token and navigate
+                localStorage.setItem("token", data.token);
+                navigate("/admin");
+                
+                setTimeout(() => {
+                  alert("Login successful ✅");
+                }, 150);
+            } else {
+                setError(data.error || "Invalid credentials ❌");
+            }
+        } catch (err) {
+            setError("Could not connect to server ❌");
+        } finally {
+            setLoading(false);
+        }
     };
 
   return (
@@ -60,7 +67,7 @@ function AdminLogin() {
 
       {error && <p className="error">{error}</p>}
 
-      <button type="submit">Login</button>
+      <button type="submit" disabled={loading}>{loading ? "Logging in..." : "Login"}</button>
       </form>
       </div>
   );
