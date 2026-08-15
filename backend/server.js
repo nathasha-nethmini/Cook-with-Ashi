@@ -17,6 +17,9 @@ const multer = require("multer");
 const cloudinary = require("cloudinary").v2; // Using Cloudinary v1 for compatibility
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const sendAdminWhatsApp = require("./whatsapp");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const auth = require("./middleware/auth");
 
 const app = express();
 app.use(cors());
@@ -28,6 +31,7 @@ const client = new MongoClient(uri);
 
 let ordersCollection;
 let menuCollection;
+let adminsCollection;
 
 async function connectDB() {
   try {
@@ -36,6 +40,15 @@ async function connectDB() {
     const db = client.db("foodDB");
     ordersCollection = db.collection("orders");
     menuCollection = db.collection("menu");
+    adminsCollection = db.collection("admins");
+
+    // Seed default admin if none exists
+    const adminCount = await adminsCollection.countDocuments();
+    if (adminCount === 0) {
+      const hashedPassword = await bcrypt.hash("admin123", 10);
+      await adminsCollection.insertOne({ username: "admin", password: hashedPassword });
+      console.log("Default admin created: username: admin, password: admin123");
+    }
   } catch (err) {
     console.error("DB connection error:", err);
   }
@@ -60,6 +73,39 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage });
 
+/* ---------- ADMIN ROUTES ---------- */
+app.post("/api/admin/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const admin = await adminsCollection.findOne({ username });
+    if (!admin) return res.status(400).json({ error: "Invalid credentials" });
+
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
+
+    const token = jwt.sign({ admin: { id: admin._id } }, process.env.JWT_SECRET || "default_super_secret", { expiresIn: "1h" });
+    res.json({ token, username: admin.username });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put("/api/admin/update-credentials", auth, async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) return res.status(400).json({ error: "Username and password required" });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await adminsCollection.updateOne(
+      { _id: new ObjectId(req.admin.id) },
+      { $set: { username, password: hashedPassword } }
+    );
+    res.json({ success: true, message: "Credentials updated" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 /* ---------- ORDER ROUTES ---------- */
 app.post("/api/order", async (req, res) => {
   try {
@@ -72,7 +118,7 @@ app.post("/api/order", async (req, res) => {
   }
 });
 
-app.get("/api/orders", async (req, res) => {
+app.get("/api/orders", auth, async (req, res) => {
   try {
     const orders = await ordersCollection.find().toArray();
     res.json(orders);
@@ -82,7 +128,7 @@ app.get("/api/orders", async (req, res) => {
 });
 
 /* ---------- MENU ROUTES ---------- */
-app.post("/api/menu", upload.single("image"), async (req, res) => {
+app.post("/api/menu", auth, upload.single("image"), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: "Image is required" });
@@ -121,7 +167,7 @@ app.get("/api/menu", async (req, res) => {
   }
 });
 
-app.delete("/api/menu/:id", async (req, res) => {
+app.delete("/api/menu/:id", auth, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -137,7 +183,7 @@ app.delete("/api/menu/:id", async (req, res) => {
   }
 });
 
-app.patch("/api/orders/:id/status", async (req, res) => {
+app.patch("/api/orders/:id/status", auth, async (req, res) => {
   try {
     const { id } = req.params;
     const { status, deliveryDate } = req.body;
