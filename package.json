@@ -1,5 +1,16 @@
 {
+  "name": "cook-with-ashi-root",
+  "version": "1.0.0",
+  "scripts": {
+    "dev:frontend": "cd cook-with-ashi && npm run dev",
+    "dev:backend": "cd backend && npm start",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "install:all": "npm install && cd backend && npm install && cd ../cook-with-ashi && npm install"
+  },
   "dependencies": {
     "sweetalert2": "^11.26.17"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }
