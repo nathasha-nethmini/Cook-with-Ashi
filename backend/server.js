@@ -1,4 +1,15 @@
 require("dotenv").config();
+
+// Validate required environment variables before starting
+const requiredEnvVars = ["DBURL", "CLOUD_NAME", "CLOUD_API_KEY", "CLOUD_API_SECRET"];
+const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
+
+if (missingEnvVars.length > 0) {
+  console.error("❌ ERROR: Missing required environment variables in backend/.env file:");
+  missingEnvVars.forEach(envVar => console.error(`  - ${envVar}`));
+  console.error("Please add them before starting the server.");
+  process.exit(1);
+}
 const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
