@@ -41,6 +41,9 @@ function Post() {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/menu`, {
         method: "POST",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
         body: formData,
       });
 
@@ -66,6 +69,9 @@ function Post() {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/menu/${id}`, {
         method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        }
       });
       const data = await res.json();
 

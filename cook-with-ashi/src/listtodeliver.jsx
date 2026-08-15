@@ -23,7 +23,10 @@ function Admin() {
         `${import.meta.env.VITE_API_URL}/api/orders/${id}/status`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+          },
           body: JSON.stringify({ status: newStatus, deliveryDate }),
         }
       );
@@ -48,7 +51,17 @@ function Admin() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+          }
+        });
+        
+        if (res.status === 401) {
+          logout();
+          return;
+        }
+
         const data = await res.json();
 
         const today = new Date();
