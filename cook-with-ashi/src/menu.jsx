@@ -9,7 +9,11 @@ function Menu() {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/menu`);
       const data = await res.json();
-      setMenuList(data);
+      if (Array.isArray(data)) {
+        setMenuList(data);
+      } else {
+        console.error("API did not return an array:", data);
+      }
     } catch (err) {
       console.error("Failed to fetch menu:", err);
     }

@@ -22,10 +22,12 @@ export default function Order() {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/menu`);
       const data = await res.json();
-      setMenuList(data);
-
-      // Set default meal to first item if not set
-      if (data.length > 0 && !meal) setMeal(data[0].name);
+      if (Array.isArray(data)) {
+        setMenuList(data);
+        if (data.length > 0 && !meal) setMeal(data[0].name);
+      } else {
+        console.error("API did not return an array:", data);
+      }
     } catch (err) {
       console.error("Failed to fetch menu:", err);
     }
