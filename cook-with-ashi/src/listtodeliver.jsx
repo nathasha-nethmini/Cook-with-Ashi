@@ -130,6 +130,7 @@ function Admin() {
                 <th>count</th>
                 <th>special</th>
               <th>Address</th>
+              <th>Location</th>
               <th>Landmark</th>
               <th>Delivery Date</th>
               <th>Status</th>
@@ -163,6 +164,20 @@ function Admin() {
                   <td>{order.count}</td>
                   <td>{order.special}</td>
                   <td>{order.address}</td>
+                  <td>
+                    {order.location ? (
+                      <a 
+                        href={`https://www.google.com/maps?q=${order.location.lat},${order.location.lng}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        style={{ color: "#ff9800", fontWeight: "bold", textDecoration: "none" }}
+                      >
+                        📍 View Map
+                      </a>
+                    ) : (
+                      <span style={{ color: "gray" }}>N/A</span>
+                    )}
+                  </td>
                   <td>{order.landmark}</td>
                   <td>
                     {order.deliveryDate

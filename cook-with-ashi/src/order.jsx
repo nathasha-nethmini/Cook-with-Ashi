@@ -1,6 +1,55 @@
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { MapContainer, TileLayer, Marker, useMapEvents, Circle } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+// Fix Leaflet's default icon missing issue
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
+
+const BADULLA_CENTER = { lat: 6.9934, lng: 81.0550 };
+const MAX_DISTANCE_KM = 5;
+
+// Helper to calculate distance
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Radius of the earth in km
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  return R * c; 
+}
+
+function LocationSelector({ location, setLocation }) {
+  useMapEvents({
+    click(e) {
+      const { lat, lng } = e.latlng;
+      const dist = getDistanceFromLatLonInKm(BADULLA_CENTER.lat, BADULLA_CENTER.lng, lat, lng);
+      
+      if (dist > MAX_DISTANCE_KM) {
+        Swal.fire({
+          title: "Outside Delivery Zone",
+          text: "Sorry, we only deliver within 5km of Badulla town!",
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
+      } else {
+        setLocation({ lat, lng });
+      }
+    },
+  });
+
+  return location ? <Marker position={location} /> : null;
+}
 
 export default function Order() {
   const [name, setName] = useState("");
@@ -11,6 +60,7 @@ export default function Order() {
   const [count, setCount] = useState("1");
   const [menuList, setMenuList] = useState([]); // store menu from DB
   const [special, setSpecial] = useState("");
+  const [location, setLocation] = useState(null);
   const navigate = useNavigate();
   
   const home = () => {
@@ -39,7 +89,15 @@ export default function Order() {
 
   const submitOrder = async (e) => {
     e.preventDefault();
-    const orderData = { name, address, landmark, phone, meal, count, special };
+    if (!location) {
+      Swal.fire({
+        title: "Location Required",
+        text: "Please drop a pin on the map so our driver can find you!",
+        icon: "warning",
+      });
+      return;
+    }
+    const orderData = { name, address, landmark, phone, meal, count, special, location };
 
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/order`, {
@@ -63,6 +121,7 @@ export default function Order() {
         setAddress("");
         setLandmark("");
         setPhone("");
+        setLocation(null);
         if (menuList.length > 0) setMeal(menuList[0].name);
       } else {
         Swal.fire({
@@ -121,6 +180,39 @@ export default function Order() {
           <p className="note">
             * Enter the delivery address clearly.
           </p>
+
+          <label>Delivery Location (Map)</label>
+          <p className="note">Tap on the map to drop a pin on your house, or click the button below to automatically find your location.</p>
+          <button type="button" style={{ marginBottom: "10px", backgroundColor: "#ff9800", color: "white", padding: "8px 12px", border: "none", borderRadius: "5px", cursor: "pointer", width: "100%", fontWeight: "bold" }} onClick={() => {
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                (position) => {
+                  const lat = position.coords.latitude;
+                  const lng = position.coords.longitude;
+                  const dist = getDistanceFromLatLonInKm(BADULLA_CENTER.lat, BADULLA_CENTER.lng, lat, lng);
+                  if (dist > MAX_DISTANCE_KM) {
+                    Swal.fire({ title: "Outside Delivery Zone", text: "Your current location is more than 5km from Badulla town!", icon: "warning" });
+                  } else {
+                    setLocation({ lat, lng });
+                  }
+                },
+                () => alert("Unable to retrieve your location")
+              );
+            } else {
+              alert("Geolocation is not supported by this browser.");
+            }
+          }}>
+            📍 Find My Location
+          </button>
+          
+          <MapContainer center={BADULLA_CENTER} zoom={13} style={{ height: "300px", width: "100%", marginBottom: "20px", borderRadius: "10px", zIndex: 0 }}>
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            />
+            <Circle center={BADULLA_CENTER} radius={5000} pathOptions={{ color: 'red', fillColor: '#f03', fillOpacity: 0.1 }} />
+            <LocationSelector location={location} setLocation={setLocation} />
+          </MapContainer>
 
 
           <label>
