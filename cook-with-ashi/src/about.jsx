@@ -29,7 +29,7 @@ function About() {
           <nav id="navbar">
                 <Link to="/">Home</Link>
                 {/* <Link to="/about">About</Link> */}
-                <Link to="/order" target="_blank" rel="noopener noreferrer">Order</Link>
+                <Link to="/order">Order</Link>
                 <Link to="/contact">Contact</Link>
           </nav>
           <div className="about-content">
