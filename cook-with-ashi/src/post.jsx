@@ -13,7 +13,11 @@ function Post() {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/menu`);
       const data = await res.json();
-      setMenuList(data);
+      if (Array.isArray(data)) {
+        setMenuList(data);
+      } else {
+        console.error("API did not return an array:", data);
+      }
     } catch (err) {
       console.error("Failed to fetch menu:", err);
     }
@@ -91,7 +95,7 @@ function Post() {
     <>
       <nav>
         <Link to="/listtodeliver">List to Deliver</Link>
-        <Link to="/0000011111112222222333333">Orders</Link>
+        <Link to="/admin">Orders</Link>
       </nav>
 
       {/* ADD MENU CARD */}
